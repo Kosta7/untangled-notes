@@ -1,22 +1,41 @@
-import * as React from 'react';
-import './App.css';
+import * as React from "react";
+import { DragDropContext } from "react-dnd";
+import TouchBackend from "react-dnd-touch-backend";
+import { SortableTreeWithoutDndContext as SortableTree } from "react-sortable-tree";
+import FileExplorerTheme from "react-sortable-tree-theme-file-explorer";
 
-import logo from './logo.svg';
+interface INode {
+  title?: string;
+  expanded?: boolean;
+  children?: INode[];
+}
 
-class App extends React.Component {
+interface IState {
+  treeData: INode[];
+}
+
+class App extends React.Component<{}, IState> {
+  constructor(props: {}) {
+    super(props);
+
+    this.state = {
+      treeData: [
+        { title: "Chicken", expanded: true, children: [{ title: "Egg" }] }
+      ]
+    };
+  }
+
   public render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.tsx</code> and save to reload.
-        </p>
+      <div style={{ height: 500 }}>
+        <SortableTree
+          treeData={this.state.treeData}
+          onChange={treeData => this.setState({ treeData })}
+          theme={FileExplorerTheme}
+        />
       </div>
     );
   }
 }
 
-export default App;
+export default DragDropContext(TouchBackend({ enableMouseEvents: true }))(App);
